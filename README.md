@@ -35,9 +35,13 @@ drums, an arbitrary described sound) use the ACE-Step or SAM-Audio plugins.
 Speaker labels (`[S01]`, `[S02]`, …) are relative to one recording. They are
 not identities and do not carry across separate runs.
 
-**Hotwords:** the ABI's `context` field is forwarded as the model's hotword
-hint, which is the documented way to bias it toward names, jargon or product
-terms. Pass a comma-separated list.
+**Hotwords:** the ABI's `context` field is appended to the model's default
+instruction as its hotword hint — the documented way to bias it toward names,
+jargon or product terms. Pass a comma-separated list. (Appended, not
+substituted: `build_transcription_messages(prompt=...)` replaces the whole
+instruction, so passing the hint alone would drop the "transcribe with
+timestamps and speaker labels" part and the model returns text that parses to
+nothing.)
 
 ## Model / GPU
 
@@ -71,6 +75,19 @@ Use the venv modal client (`sdk/.venv/bin/modal` from the tongflow repo) with
    step 3, and check it comes out right.
 6. **Length**: try something over ~10 minutes. If the transcript stops early,
    raise `MOSS_MAX_NEW_TOKENS` — that is the cap, not a model limit.
+
+## Measured
+
+Smoke test on an L4, 15.6 s of synthesized two-speaker English dialogue
+(4 alternating turns), 2026-09-09:
+
+- **`transcribe-timestamp`**: 41 s end to end including cold boot. All four
+  turns attributed correctly (`S01`/`S02` alternating), transcription
+  word-accurate, timestamps continuous and ending at 15.61 s against a 15.62 s
+  source.
+- **`separate_speaker`**: two tracks, 8.57 s and 6.89 s — exactly the summed
+  durations of turns 1+3 and 2+4.
+- **`transcribe`**: same content flattened, with and without hotwords.
 
 ## Notes
 

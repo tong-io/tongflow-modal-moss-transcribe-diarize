@@ -126,10 +126,19 @@ def _parse(transcript: str) -> list[dict]:
     return out
 
 
-def _hotword_prompt(context: str) -> str | None:
-    """The model takes domain terms as a hint appended to its default prompt."""
+def _prompt_with_hotwords(context: str) -> str | None:
+    """Default instruction + a hotword hint, or None to use the default as-is.
+
+    ``build_transcription_messages(prompt=...)`` *replaces* the instruction
+    rather than extending it, so passing the hint alone drops the "transcribe
+    with timestamps and speaker labels" part and the model returns text that
+    parses to nothing. The hint has to be appended to DEFAULT_PROMPT."""
     context = (context or "").strip()
-    return f"热词提示：{context}" if context else None
+    if not context:
+        return None
+    from moss_transcribe_diarize.inference_utils import DEFAULT_PROMPT
+
+    return f"{DEFAULT_PROMPT}热词提示：{context}"
 
 
 @deploy
@@ -173,10 +182,10 @@ class Inference:
             f.write(audio_bytes)
             src = f.name
         try:
-            hint = _hotword_prompt(context)
+            prompt = _prompt_with_hotwords(context)
             messages = (
-                build_transcription_messages(src, prompt=hint)
-                if hint
+                build_transcription_messages(src, prompt=prompt)
+                if prompt
                 else build_transcription_messages(src)
             )
             result = generate_transcription(
