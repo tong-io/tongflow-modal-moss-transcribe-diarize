@@ -1,0 +1,40 @@
+{
+    "plugin": {
+        "name": "MOSS-Transcribe-Diarize",
+        "description": "Self-hosted MOSS-Transcribe-Diarize 0.9B: long-form multi-speaker transcription with timestamps and speaker labels in one pass, plus per-speaker audio tracks. 50+ languages, up to ~90 min.",
+        "icon": "/plugins/tongflow-modal-moss-transcribe-diarize.svg"
+    },
+    "env": [
+        {
+            "key": "MODAL_TOKEN_ID",
+            "required": true,
+            "description": "Modal token id",
+            "url": "https://modal.com/settings/tokens"
+        },
+        {
+            "key": "MODAL_TOKEN_SECRET",
+            "required": true,
+            "description": "Modal token secret (paired with MODAL_TOKEN_ID)"
+        },
+        {
+            "key": "HF_TOKEN",
+            "description": "Hugging Face token (the model is public and Apache-2.0; only needed if it becomes gated)",
+            "url": "https://huggingface.co/settings/tokens"
+        },
+        {
+            "key": "TONGFLOW_MODAL_CALL_TIMEOUT_S",
+            "default": "3600",
+            "description": "Max seconds to wait for a Modal call"
+        },
+        {
+            "key": "MOSS_GPU",
+            "default": "L4",
+            "description": "Modal GPU type. The model is only 0.9B, so L4 is the right size; raise it for very long recordings"
+        },
+        {
+            "key": "MOSS_MAX_NEW_TOKENS",
+            "default": "8192",
+            "description": "Decoder cap for one pass. Long multi-speaker audio needs headroom or the transcript stops mid-way"
+        }
+    ]
+}
