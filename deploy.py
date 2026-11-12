@@ -92,7 +92,7 @@ image = (
         # transcript parsing. The weights and the remote code come from HF.
         "git+https://github.com/OpenMOSS/MOSS-Transcribe-Diarize.git",
     )
-    .pip_install("tongflow==0.3.2", "fastapi[standard]")
+    .pip_install("tongflow==1.0.0", "fastapi[standard]")
     .env({"HF_HOME": "/models/hf", **_DEPLOY_ENV})
 )
 
